@@ -1,28 +1,33 @@
 networks:
-  tailscale_proxy_example:
+  headscale_proxy_example:
     external: false
 
 volumes:
-  tailscale-whoami-state:
+  headscale-whoami-state:
 
 services:
-
   whoami:
     image: traefik/whoami
     networks:
-     - tailscale_proxy_example
+     - headscale_proxy_example
 
-  tailscale-whoami-proxy:
-    image: hollie/tailscale-caddy-proxy:latest
+  headscale-whoami-proxy:
+    image: dieterkoch/headscale-caddy-cloudflare-proxy
     volumes:
-      - tailscale-whoami-state:/var/lib/tailscale # Persist the tailscale state directory
+      # Persist the tailscale state directory so login state etc. is retained between restarts.
+      - headscale-whoami-state:/var/lib/tailscale
     environment:
-      - TS_HOSTNAME=tailscale-example 	# Hostname you want this instance to have on the tailscale network
-      - TS_TAILNET=tailnet-XXXX         # Your tailnet name without the .ts.net suffix!
-      - CADDY_TARGET=whoami:80		# Target service and port
-#      - TS_EXTRA_ARGS=--accept-dns      # Optional extra arguments to pass when starting tailscale
-#      - SKIP_CADDYFILE_GENERATION=1     # Set this if you want to be able to override /etc/caddy/Caddyfile via a volume mapping      
+      # Hostname you want this instance to have on your headscale network.
+      - TS_HOSTNAME=headscale-example
+      # Your tailnet name including the full top level domain(s).
+      - TS_TAILNET=vpn.example.com
+      # Target service and port.
+      - CADDY_TARGET=whoami:80
+      # Optional extra arguments to pass when starting tailscale. Use this to include your Headscale login URL.
+      - TS_EXTRA_ARGS=--login-server https://headscale.example.com
+      # Cloudflare API token that is able to modify DNS entries for your configured MagicDNS domain.
+      - CLOUDFLARE_DNS_API_TOKEN=your_cloudflare_token_here
     restart: on-failure
     init: true
     networks:
-     - tailscale_proxy_example
+     - headscale_proxy_example
