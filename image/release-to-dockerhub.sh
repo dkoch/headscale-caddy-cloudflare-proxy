@@ -1,13 +1,12 @@
 set -ex
 # SET THE FOLLOWING VARIABLES
 # docker hub username
-USERNAME=hollie
+USERNAME=dieterkoch
 # image name
-IMAGE=tailscale-caddy-proxy
+IMAGE=headscale-caddy-cloudflare-proxy
 # platforms
 PLATFORM=linux/arm64,linux/amd64,linux/arm/v7
 # bump version
-#docker run --rm -v "$PWD":/app treeder/bump patch
 version=`awk -F "=" '/TAILSCALE_VERSION=/{print $NF}' Dockerfile`
 echo "Building version: $version"
 # run build
