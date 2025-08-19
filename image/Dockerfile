@@ -1,4 +1,6 @@
-ARG TAILSCALE_VERSION=v1.82.5
+# syntax=docker/dockerfile:1
+# check=skip=SecretsUsedInArgOrEnv
+ARG TAILSCALE_VERSION=v1.84.2
 
 # Build Caddy with Cloudflare DNS integration.
 FROM caddy:builder-alpine AS builder
