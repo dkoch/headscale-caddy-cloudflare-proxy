@@ -20,6 +20,7 @@ else
 cat >> /etc/caddy/Caddyfile <<EOL
 tls {
   dns cloudflare ${CLOUDFLARE_DNS_API_TOKEN}
+  resolvers 1.1.1.1
 }
 EOL
 
